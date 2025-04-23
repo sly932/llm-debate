@@ -1,0 +1,13 @@
+# LLM辩论系统依赖
+
+# 基础依赖
+pyyaml>=6.0
+python-dotenv>=1.0.0
+
+# LLM相关
+openai>=1.0.0
+
+# 工具库
+tqdm>=4.65.0
+requests>=2.28.2
+

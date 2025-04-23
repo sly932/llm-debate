@@ -1,0 +1,24 @@
+# LLM辩论系统配置文件
+
+# 基本配置
+app:
+  name: "LLM辩论系统"
+  version: "0.1.0"
+  debug: false
+  log_level: "INFO"
+  log_file: "logs/llm_debate.log"
+
+# 辩论配置
+debate:
+  default_model: "gpt-3.5-turbo"
+  default_cycles: 3
+  save_results: true
+  data_dir: "data"
+
+# LLM配置
+llm:
+  timeout: 30
+  max_tokens: 1000
+  temperature: 0.7
+  top_p: 0.9
+

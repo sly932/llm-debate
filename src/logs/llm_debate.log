@@ -1,0 +1,21 @@
+2025-04-23 10:49:00,337 - llm_debate - INFO - 开始辩论，查询：我在做agent开发，遇到一些问题，应该阅读英文文档还是翻译成中文文档再阅读，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 10:49:53,432 - llm_debate - INFO - 开始辩论，查询：，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 10:50:38,627 - llm_debate - INFO - 开始辩论，查询：我在进行agent开发，遇到一些问题 ，应该阅读中文文档还是英文文档，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 10:55:06,136 - llm_debate - INFO - 开始辩论，查询：'我在进行agent开发，遇到一些问题 ，应该阅读英文文档，还是翻译成中文文档再阅读'，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 10:57:25,335 - llm_debate - INFO - 开始辩论，查询：'我在进行agent开发，遇到一些问题 ，应该阅读英文文档，还是翻译成中文文档再阅读'，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 11:12:03,377 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 11:14:43,581 - llm_debate - INFO - 辩论完成，主题：Agent应用开发应该看英文文档还是翻译成中文文档再阅读
+2025-04-23 11:16:46,388 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 11:20:01,817 - llm_debate - INFO - 辩论完成，主题：Agent应用开发应该看英文文档还是翻译成中文文档再阅读
+2025-04-23 11:30:22,799 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 11:33:34,780 - llm_debate - INFO - 辩论完成，主题：Agent应用开发应该阅读英文文档还是翻译成中文文档
+2025-04-23 11:35:44,858 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 11:38:29,650 - llm_debate - INFO - 辩论完成，主题：Agent应用开发应该看英文文档还是翻译成中文文档再阅读
+2025-04-23 11:56:36,553 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 11:59:25,208 - llm_debate - INFO - 辩论完成，主题：Agent应用开发应该看英文文档还是翻译成中文文档再阅读
+2025-04-23 11:59:25,216 - llm_debate - INFO - 辩论结果已保存到：data/59ceca17-662f-46c0-bc36-06a1d508e9c3.json
+2025-04-23 18:23:42,441 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 19:04:47,214 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 19:12:34,971 - llm_debate - INFO - 开始辩论，查询：我在做Agent应用开发，应该看英文文档还是翻译成中文文档再阅读。，模型1：deepseek-v3-friday，模型2：deepseek-v3-friday，回合数：3
+2025-04-23 19:16:06,908 - llm_debate - INFO - 辩论完成，主题：Agent应用开发应该阅读英文文档还是翻译成中文文档
+2025-04-23 19:16:06,912 - llm_debate - INFO - 辩论结果已保存到：data/c7419875-29c3-4029-916d-624bfbdaf923.json

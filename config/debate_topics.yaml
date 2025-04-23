@@ -1,0 +1,33 @@
+# 辩论主题配置文件
+
+topics:
+  # 技术类
+  technology:
+    - topic: "人工智能是否会取代人类工作？"
+      affirmative: "人工智能将取代大部分人类工作"
+      negative: "人工智能不会取代大部分人类工作"
+
+    - topic: "是否应该限制社交媒体的使用？"
+      affirmative: "应该限制社交媒体的使用"
+      negative: "不应该限制社交媒体的使用"
+
+  # 社会类
+  society:
+    - topic: "远程工作是否应该成为常态？"
+      affirmative: "远程工作应该成为常态"
+      negative: "远程工作不应该成为常态"
+
+    - topic: "是否应该实行全民基本收入？"
+      affirmative: "应该实行全民基本收入"
+      negative: "不应该实行全民基本收入"
+
+  # 教育类
+  education:
+    - topic: "传统教育是否已经过时？"
+      affirmative: "传统教育已经过时"
+      negative: "传统教育没有过时"
+
+    - topic: "是否应该取消标准化考试？"
+      affirmative: "应该取消标准化考试"
+      negative: "不应该取消标准化考试"
+

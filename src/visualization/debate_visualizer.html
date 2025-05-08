@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM辩论可视化</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #00f0ff;
+            --secondary-color: #ff00e6;
+            --bg-color: #0a0a1a;
+            --panel-color: rgba(16, 18, 35, 0.85);
+            --text-color: #e0e0ff;
+            --highlight-color: #00f0ff;
+            --role1-color: #00c8ff;
+            --role2-color: #ff00c8;
+            --glow: 0 0 10px var(--primary-color), 0 0 20px rgba(0, 240, 255, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255, 0, 230, 0.1) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .upload-section {
+            background: var(--panel-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: var(--glow);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            box-shadow: 0 0 15px var(--primary-color), 0 0 30px rgba(0, 240, 255, 0.3);
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(0, 240, 255, 0.5);
+            border-radius: 10px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background: rgba(0, 240, 255, 0.05);
+        }
+
+        .file-upload::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 240, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        .file-upload input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .file-upload-text {
+            font-size: 1.2rem;
+            text-align: center;
+        }
+
+        .visualization-section {
+            display: none;
+            background: var(--panel-color);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: var(--glow);
+            backdrop-filter: blur(10px);
+        }
+
+        .debate-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: rgba(10, 10, 26, 0.7);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+        }
+
+        .info-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 1rem;
+            color: var(--highlight-color);
+            font-size: 1.3rem;
+        }
+
+        .info-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .debate-history {
+            margin-top: 3rem;
+        }
+
+        .debate-history h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--highlight-color);
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 1rem;
+            border-radius: 10px;
+            background: rgba(10, 10, 26, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-color) var(--bg-color);
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(10, 10, 26, 0.5);
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.role1 {
+            align-self: flex-start;
+        }
+
+        .message.role2 {
+            align-self: flex-end;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .message.role1 .message-header {
+            color: var(--role1-color);
+        }
+
+        .message.role2 .message-header {
+            color: var(--role2-color);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .message.role1 .avatar {
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.2), rgba(0, 200, 255, 0.5));
+            border: 2px solid var(--role1-color);
+            box-shadow: 0 0 10px rgba(0, 200, 255, 0.5);
+        }
+
+        .message.role2 .avatar {
+            background: linear-gradient(135deg, rgba(255, 0, 200, 0.2), rgba(255, 0, 200, 0.5));
+            border: 2px solid var(--role2-color);
+            box-shadow: 0 0 10px rgba(255, 0, 200, 0.5);
+        }
+
+        .message-content {
+            padding: 1rem;
+            border-radius: 10px;
+            line-height: 1.6;
+            font-size: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .message.role1 .message-content {
+            background: linear-gradient(135deg, rgba(0, 200, 255, 0.1), rgba(0, 200, 255, 0.2));
+            border: 1px solid rgba(0, 200, 255, 0.3);
+            border-top-left-radius: 0;
+        }
+
+        .message.role2 .message-content {
+            background: linear-gradient(135deg, rgba(255, 0, 200, 0.1), rgba(255, 0, 200, 0.2));
+            border: 1px solid rgba(255, 0, 200, 0.3);
+            border-top-right-radius: 0;
+            text-align: right;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 240, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .holographic-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(0, 240, 255, 0) 0%, 
+                rgba(0, 240, 255, 0.05) 25%, 
+                rgba(0, 240, 255, 0) 50%, 
+                rgba(255, 0, 230, 0.05) 75%, 
+                rgba(255, 0, 230, 0) 100%);
+            background-size: 200% 200%;
+            animation: holographic 15s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes holographic {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 200%; }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary-color);
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        .error-message {
+            display: none;
+            background-color: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            color: #ff6b6b;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 1rem;
+        }
+
+        .btn {
+            font-family: 'Orbitron', sans-serif;
+            background: transparent;
+            color: var(--text-color);
+            border: 2px solid var(--primary-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            width: 100%;
+        }
+
+        .btn:hover {
+            color: var(--bg-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .btn-reset {
+            border-color: var(--secondary-color);
+        }
+
+        .btn-reset::before {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .debate-info {
+                grid-template-columns: 1fr;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    <div class="holographic-effect"></div>
+    
+    <div class="container">
+        <header>
+            <h1>LLM辩论可视化系统</h1>
+        </header>
+
+        <div class="upload-section" id="uploadSection">
+            <div class="file-upload" id="fileUpload">
+                <input type="file" id="jsonFileInput" accept=".json">
+                <div class="file-upload-icon">📤</div>
+                <div class="file-upload-text">点击或拖拽上传JSON文件</div>
+            </div>
+            <div class="error-message" id="errorMessage"></div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>正在处理数据...</p>
+        </div>
+
+        <div class="visualization-section" id="visualizationSection">
+            <div class="debate-info" id="debateInfo">
+                <!-- 辩论信息将在这里动态生成 -->
+            </div>
+
+            <div class="debate-history">
+                <h2>辩论历史</h2>
+                <div class="chat-container" id="chatContainer">
+                    <!-- 辩论历史将在这里动态生成 -->
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-reset" id="resetBtn">重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 创建粒子效果
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // 随机位置
+                const x = Math.random() * 100;
+                const delay = Math.random() * 20;
+                const size = Math.random() * 3 + 1;
+                const duration = Math.random() * 20 + 10;
+                
+                particle.style.left = `${x}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // 随机颜色
+                if (Math.random() > 0.5) {
+                    particle.style.backgroundColor = '#00f0ff';
+                    particle.style.boxShadow = '0 0 10px #00f0ff';
+                } else {
+                    particle.style.backgroundColor = '#ff00e6';
+                    particle.style.boxShadow = '0 0 10px #ff00e6';
+                }
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // 处理文件上传
+        function handleFileUpload() {
+            const fileInput = document.getElementById('jsonFileInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
+            const uploadSection = document.getElementById('uploadSection');
+            const visualizationSection = document.getElementById('visualizationSection');
+            
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // 检查文件类型
+                if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                    errorMessage.textContent = '请上传JSON文件';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+                
+                errorMessage.style.display = 'none';
+                loading.style.display = 'block';
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        visualizeData(data);
+                        
+                        // 显示可视化部分
+                        uploadSection.style.display = 'none';
+                        loading.style.display = 'none';
+                        visualizationSection.style.display = 'block';
+                    } catch (error) {
+                        errorMessage.textContent = '无法解析JSON文件: ' + error.message;
+                        errorMessage.style.display = 'block';
+                        loading.style.display = 'none';
+                    }
+                };
+                
+                reader.onerror = function() {
+                    errorMessage.textContent = '读取文件时发生错误';
+                    errorMessage.style.display = 'block';
+                    loading.style.display = 'none';
+                };
+                
+                reader.readAsText(file);
+            });
+        }
+
+        // 可视化数据
+        function visualizeData(data) {
+            // 显示辩论信息
+            const debateInfo = document.getElementById('debateInfo');
+            debateInfo.innerHTML = `
+                <div class="info-card">
+                    <h3>辩论主题</h3>
+                    <p>${data.topic || '未提供'}</p>
+                </div>
+                <div class="info-card">
+                    <h3>正方观点</h3>
+                    <p>${data.affirmative_argument || '未提供'}</p>
+                </div>
+                <div class="info-card">
+                    <h3>反方观点</h3>
+                    <p>${data.negative_argument || '未提供'}</p>
+                </div>
+            `;
+            
+            // 显示辩论历史
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = '';
+            
+            if (data.debate_history && data.debate_history.length > 0) {
+                // 延迟显示消息，创建打字效果
+                let messageDelay = 0;
+                
+                data.debate_history.forEach((entry, index) => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    messageElement.classList.add(entry.role === 'role1' ? 'role1' : 'role2');
+                    
+                    const roleName = entry.role === 'role1' ? '正方' : '反方';
+                    const avatarLetter = entry.role === 'role1' ? 'A' : 'B';
+                    
+                    messageElement.innerHTML = `
+                        <div class="message-header">
+                            <div class="avatar">${avatarLetter}</div>
+                            <div class="role-name">${roleName}</div>
+                        </div>
+                        <div class="message-content">${formatMessageContent(entry.msg)}</div>
+                    `;
+                    
+                    messageElement.style.opacity = '0';
+                    chatContainer.appendChild(messageElement);
+                    
+                    // 延迟显示每条消息
+                    setTimeout(() => {
+                        messageElement.style.opacity = '1';
+                        messageElement.style.animation = 'fadeIn 0.5s ease-out forwards';
+                        
+                        // 滚动到最新消息
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, messageDelay);
+                    
+                    messageDelay += 300;
+                });
+            } else {
+                chatContainer.innerHTML = '<p style="text-align: center; padding: 2rem;">没有辩论历史数据</p>';
+            }
+        }
+
+        // 格式化消息内容，保留换行符
+        function formatMessageContent(content) {
+            if (!content) return '';
+            
+            // 将换行符转换为HTML换行
+            return content.replace(/\n/g, '<br>');
+        }
+
+        // 重置按钮功能
+        function setupResetButton() {
+            const resetBtn = document.getElementById('resetBtn');
+            const uploadSection = document.getElementById('uploadSection');
+            const visualizationSection = document.getElementById('visualizationSection');
+            const fileInput = document.getElementById('jsonFileInput');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            resetBtn.addEventListener('click', function() {
+                // 重置文件输入
+                fileInput.value = '';
+                errorMessage.style.display = 'none';
+                
+                // 切换显示
+                visualizationSection.style.display = 'none';
+                uploadSection.style.display = 'block';
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            handleFileUpload();
+            setupResetButton();
+            
+            // 拖放功能
+            const fileUpload = document.getElementById('fileUpload');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileUpload.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileUpload.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileUpload.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                fileUpload.classList.add('highlight');
+            }
+            
+            function unhighlight() {
+                fileUpload.classList.remove('highlight');
+            }
+            
+            fileUpload.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length) {
+                    document.getElementById('jsonFileInput').files = files;
+                    // 触发change事件
+                    const event = new Event('change');
+                    document.getElementById('jsonFileInput').dispatchEvent(event);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

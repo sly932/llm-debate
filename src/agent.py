@@ -78,22 +78,6 @@ class DebateAgent:
         self.history.append({"role": "assistant", "content": response})
         return response
 
-    def conclude(self, topic: str) -> str:
-        """
-        生成结论陈述
-
-        Args:
-            topic: 辩论主题
-
-        Returns:
-            str: 代理的结论陈述
-        """
-        # 这里应该调用LLM API，使用结论提示词生成结论
-        # 实际实现时需要替换为真实的LLM调用
-        conclusion = f"这是{self.role}的结论陈述，立场是{self.stance}，主题是{topic}"
-        self.history.append({"role": "assistant", "content": conclusion})
-        return conclusion
-
     def get_history(self) -> List[Dict[str, str]]:
         """
         获取代理的对话历史

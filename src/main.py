@@ -18,8 +18,8 @@ logger = setup_logger(log_file="logs/llm_debate.log")
 def parse_arguments():
     """解析命令行参数"""
     parser = argparse.ArgumentParser(description="LLM辩论系统")
-    parser.add_argument("--query", type=str, help="用户查询")
-    parser.add_argument("--model_1", type=str, default="deepseek-v3-friday", help="正房使用的LLM模型")
+    parser.add_argument("--query", type=str, default="开发AI应用过程中，学习英文文档时，应该查看原版的英文文档还是翻译的中文文档。",help="用户查询")
+    parser.add_argument("--model_1", type=str, default="deepseek-v3-friday", help="正方使用的LLM模型")
     parser.add_argument("--model_2", type=str, default="deepseek-v3-friday", help="反方使用的LLM模型")
     parser.add_argument("--analysis_model", type=str, default="deepseek-v3-friday", help="拆解论点使用的LLM模型")
     parser.add_argument("--cycles", type=int, default=3, help="辩论回合数")

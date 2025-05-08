@@ -73,7 +73,8 @@ class DebateAgent:
         Returns:
             str: 代理的回应
         """
-        self.history.append({"role": "user", "content": opponent_argument})
+
+        self.history.append({"role": "user", "content": self._build_user_prompt(opponent_argument)})
         response = LLMClient.get_client(model_name).generate(msgs=self.history)
         self.history.append({"role": "assistant", "content": response})
         return response
@@ -92,4 +93,11 @@ class DebateAgent:
         prompt = AGENT_DEBATE_SYSTEM_PROMPT.replace(f"{topic}", topic)
         prompt = prompt.replace(f"{argument}", argument)
         return prompt
+
+    def _build_user_prompt(self, opponent_argument: str):
+        return f"""
+# 另一个LLM的观点
+{opponent_argument}
+        """
+
 

@@ -36,7 +36,7 @@
             min-height: 100vh;
             overflow-x: hidden;
             /* 创建两个径向渐变作为背景点缀，增加科幻感 */
-            background-image: 
+            background-image:
                 radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 20%),
                 radial-gradient(circle at 80% 70%, rgba(255, 0, 230, 0.1) 0%, transparent 20%);
         }
@@ -373,11 +373,11 @@
             width: 100%;
             height: 100%;
             /* 创建45度角的渐变，颜色在透明和半透明之间变化 */
-            background: linear-gradient(45deg, 
-                rgba(0, 240, 255, 0) 0%, 
-                rgba(0, 240, 255, 0.05) 25%, 
-                rgba(0, 240, 255, 0) 50%, 
-                rgba(255, 0, 230, 0.05) 75%, 
+            background: linear-gradient(45deg,
+                rgba(0, 240, 255, 0) 0%,
+                rgba(0, 240, 255, 0.05) 25%,
+                rgba(0, 240, 255, 0) 50%,
+                rgba(255, 0, 230, 0.05) 75%,
                 rgba(255, 0, 230, 0) 100%);
             background-size: 200% 200%; /* 背景尺寸放大，使动画更明显 */
             animation: holographic 15s linear infinite; /* 应用全息动画 */
@@ -525,10 +525,8 @@
 <body>
     <!-- 粒子效果容器 - 创建背景浮动粒子 -->
     <div class="particles" id="particles"></div>
-    
     <!-- 全息效果层 - 创建整体的全息光效 -->
     <div class="holographic-effect"></div>
-    
     <!-- 主内容容器 -->
     <div class="container">
         <header>
@@ -579,25 +577,21 @@
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const particleCount = 50; // 粒子总数
-            
             for (let i = 0; i < particleCount; i++) {
                 // 创建粒子DOM元素
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                
                 // 随机设置粒子属性
                 const x = Math.random() * 100;           // 随机水平位置(0-100%)
                 const delay = Math.random() * 20;        // 随机动画延迟(0-20s)
                 const size = Math.random() * 3 + 1;      // 随机大小(1-4px)
                 const duration = Math.random() * 20 + 10; // 随机动画持续时间(10-30s)
-                
                 // 应用随机样式
                 particle.style.left = `${x}%`;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.animationDelay = `${delay}s`;
                 particle.style.animationDuration = `${duration}s`;
-                
                 // 随机选择粒子颜色 - 青色或品红色
                 if (Math.random() > 0.5) {
                     particle.style.backgroundColor = '#00f0ff'; // 青色
@@ -606,7 +600,6 @@
                     particle.style.backgroundColor = '#ff00e6'; // 品红色
                     particle.style.boxShadow = '0 0 10px #ff00e6';
                 }
-                
                 // 将粒子添加到容器中
                 particlesContainer.appendChild(particle);
             }
@@ -620,26 +613,21 @@
             const loading = document.getElementById('loading');
             const uploadSection = document.getElementById('uploadSection');
             const visualizationSection = document.getElementById('visualizationSection');
-            
             // 监听文件选择变化事件
             fileInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
-                
                 // 验证文件类型是否为JSON
                 if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
                     errorMessage.textContent = '请上传JSON文件';
                     errorMessage.style.display = 'block';
                     return;
                 }
-                
                 // 隐藏错误信息，显示加载动画
                 errorMessage.style.display = 'none';
                 loading.style.display = 'block';
-                
                 // 创建文件读取器
                 const reader = new FileReader();
-                
                 // 文件读取完成后的处理
                 reader.onload = function(event) {
                     try {
@@ -647,7 +635,6 @@
                         const data = JSON.parse(event.target.result);
                         // 可视化数据
                         visualizeData(data);
-                        
                         // 切换显示：隐藏上传区域，显示可视化区域
                         uploadSection.style.display = 'none';
                         loading.style.display = 'none';
@@ -659,14 +646,12 @@
                         loading.style.display = 'none';
                     }
                 };
-                
                 // 文件读取错误处理
                 reader.onerror = function() {
                     errorMessage.textContent = '读取文件时发生错误';
                     errorMessage.style.display = 'block';
                     loading.style.display = 'none';
                 };
-                
                 // 开始读取文件内容
                 reader.readAsText(file);
             });
@@ -675,6 +660,9 @@
         // 可视化数据
         // 这个函数处理JSON数据并创建可视化内容
         function visualizeData(data) {
+            // 创建Markdown解析器实例
+            const markdown = new SimpleMarkdown();
+
             // 显示辩论基本信息（主题和双方观点）
             const debateInfo = document.getElementById('debateInfo');
             debateInfo.innerHTML = `
@@ -691,16 +679,13 @@
                     <p>${data.negative_argument || '未提供'}</p>
                 </div>
             `;
-            
             // 显示辩论历史记录
             const chatContainer = document.getElementById('chatContainer');
             chatContainer.innerHTML = '';
-            
             // 检查是否有辩论历史数据
             if (data.debate_history && data.debate_history.length > 0) {
                 // 设置消息显示延迟，创建打字效果
                 let messageDelay = 0;
-                
                 // 遍历每条辩论记录
                 data.debate_history.forEach((entry, index) => {
                     // 创建消息元素
@@ -708,34 +693,31 @@
                     messageElement.classList.add('message');
                     // 根据角色添加不同的样式类
                     messageElement.classList.add(entry.role === 'role1' ? 'role1' : 'role2');
-                    
                     // 设置角色名称和头像字母
                     const roleName = entry.role === 'role1' ? '正方' : '反方';
                     const avatarLetter = entry.role === 'role1' ? 'A' : 'B';
-                    
+
+                    // 使用Markdown解析器处理消息内容
+                    const parsedContent = markdown.parse(entry.msg);
                     // 构建消息HTML
                     messageElement.innerHTML = `
                         <div class="message-header">
                             <div class="avatar">${avatarLetter}</div>
                             <div class="role-name">${roleName}</div>
                         </div>
-                        <div class="message-content">${formatMessageContent(entry.msg)}</div>
+                        <div class="message-content">${parsedContent}</div>
                     `;
-                    
                     // 初始设置为不可见
                     messageElement.style.opacity = '0';
                     // 添加到聊天容器
                     chatContainer.appendChild(messageElement);
-                    
                     // 延迟显示每条消息，创建顺序出现的效果
                     setTimeout(() => {
                         messageElement.style.opacity = '1';
                         messageElement.style.animation = 'fadeIn 0.5s ease-out forwards';
-                        
                         // 滚动到最新消息
                         chatContainer.scrollTop = chatContainer.scrollHeight;
                     }, messageDelay);
-                    
                     // 每条消息增加300ms延迟
                     messageDelay += 300;
                 });
@@ -745,13 +727,87 @@
             }
         }
 
-        // 格式化消息内容
-        // 这个函数处理消息文本，保留换行符等格式
-        function formatMessageContent(content) {
-            if (!content) return '';
-            
-            // 将换行符转换为HTML换行标签
-            return content.replace(/\n/g, '<br>');
+        // 简易Markdown解析器 - 不依赖外部库
+        class SimpleMarkdown {
+            constructor() {
+                // 定义Markdown语法的正则表达式
+                this.rules = [
+                    // 标题 (# 标题)
+                    { pattern: /^(#{1,6})\s+(.+)$/gm, replacement: (match, p1, p2) => `<h${p1.length}>${p2}</h${p1.length}>` },
+
+                    // 粗体 (**文本** 或 __文本__)
+                    { pattern: /\*\*(.+?)\*\*|__(.+?)__/g, replacement: (match, p1, p2) => `<strong>${p1 || p2}</strong>` },
+
+                    // 斜体 (*文本* 或 _文本_)
+                    { pattern: /\*([^*]+)\*|_([^_]+)_/g, replacement: (match, p1, p2) => `<em>${p1 || p2}</em>` },
+
+                    // 代码块 (\`\`\`代码\`\`\`)
+                    { pattern: /\`\`\`([\s\S]+?)\`\`\`/g, replacement: (match, p1) => `<pre><code>${this.escapeHtml(p1)}</code></pre>` },
+
+                    // 行内代码 (`代码`)
+                    { pattern: /`([^`]+)`/g, replacement: (match, p1) => `<code>${this.escapeHtml(p1)}</code>` },
+
+                    // 链接 ([文本](URL))
+                    { pattern: /\[([^\]]+)\]\(([^)]+)\)/g, replacement: (match, p1, p2) => `<a href="${p2}" target="_blank">${p1}</a>` },
+
+                    // 图片 (![替代文本](URL))
+                    { pattern: /!\[([^\]]*)\]\(([^)]+)\)/g, replacement: (match, p1, p2) => `<img src="${p2}" alt="${p1}" title="${p1}">` },
+
+                    // 引用块 (> 文本)
+                    { pattern: /^>\s+(.+)$/gm, replacement: (match, p1) => `<blockquote>${p1}</blockquote>` },
+
+                    // 无序列表 (- 项目 或 * 项目)
+                    { pattern: /^[\*\-]\s+(.+)$/gm, replacement: (match, p1) => `<li>${p1}</li>` },
+
+                    // 有序列表 (1. 项目)
+                    { pattern: /^\d+\.\s+(.+)$/gm, replacement: (match, p1) => `<li>${p1}</li>` },
+
+                    // 水平线 (--- 或 *** 或 ___)
+                    { pattern: /^[\*\-_]{3,}$/gm, replacement: () => `<hr>` },
+
+                    // 段落 (普通文本)
+                    { pattern: /^(?!<[a-z]).+$/gm, replacement: (match) => match.trim() ? `<p>${match}</p>` : '' }
+                ];
+            }
+
+            // 转义HTML特殊字符
+            escapeHtml(text) {
+                return text
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            // 解析Markdown文本
+            parse(text) {
+                if (!text) return '';
+
+                // 预处理：处理换行符
+                let html = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+                // 应用所有规则
+                this.rules.forEach(rule => {
+                    html = html.replace(rule.pattern, rule.replacement);
+                });
+
+                // 后处理：处理列表
+                html = this.processList(html);
+
+                return html;
+            }
+
+            // 处理列表（将连续的<li>元素包装在<ul>或<ol>中）
+            processList(html) {
+                // 处理无序列表
+                html = html.replace(/(<li>[\s\S]+?<\/li>)(?!\s*<li>)/g, '<ul>$1</ul>');
+
+                // 处理有序列表
+                html = html.replace(/(<li>[\s\S]+?<\/li>)(?!\s*<li>)/g, '<ol>$1</ol>');
+
+                return html;
+            }
         }
 
         // 设置重置按钮功能
@@ -762,12 +818,10 @@
             const visualizationSection = document.getElementById('visualizationSection');
             const fileInput = document.getElementById('jsonFileInput');
             const errorMessage = document.getElementById('errorMessage');
-            
             resetBtn.addEventListener('click', function() {
                 // 重置文件输入
                 fileInput.value = '';
                 errorMessage.style.display = 'none';
-                
                 // 切换显示：隐藏可视化区域，显示上传区域
                 visualizationSection.style.display = 'none';
                 uploadSection.style.display = 'block';
@@ -782,45 +836,35 @@
             handleFileUpload();
             // 设置重置按钮功能
             setupResetButton();
-            
             // 设置拖放功能
             const fileUpload = document.getElementById('fileUpload');
-            
             // 阻止默认拖放行为
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 fileUpload.addEventListener(eventName, preventDefaults, false);
             });
-            
             function preventDefaults(e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
-            
             // 拖入和拖过时高亮上传区域
             ['dragenter', 'dragover'].forEach(eventName => {
                 fileUpload.addEventListener(eventName, highlight, false);
             });
-            
             // 拖离和放下时取消高亮
             ['dragleave', 'drop'].forEach(eventName => {
                 fileUpload.addEventListener(eventName, unhighlight, false);
             });
-            
             function highlight() {
                 fileUpload.classList.add('highlight');
             }
-            
             function unhighlight() {
                 fileUpload.classList.remove('highlight');
             }
-            
             // 处理文件放下事件
             fileUpload.addEventListener('drop', handleDrop, false);
-            
             function handleDrop(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
-                
                 if (files.length) {
                     // 设置文件输入的文件
                     document.getElementById('jsonFileInput').files = files;

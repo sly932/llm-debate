@@ -17,8 +17,12 @@
             --highlight-color: #00f0ff;    /* 高亮色：与主色相同 */
             --role1-color: #00c8ff;        /* 角色1(正方)颜色 */
             --role2-color: #ff00c8;        /* 角色2(反方)颜色 */
+            --code-bg-color: rgba(0, 0, 0, 0.3); /* 代码块背景色 */
+            --quote-bg-color: rgba(255, 255, 255, 0.05); /* 引用块背景色 */
             /* 霓虹发光效果：多层阴影叠加 */
             --glow: 0 0 10px var(--primary-color), 0 0 20px rgba(0, 240, 255, 0.5);
+            --role1-glow: 0 0 15px var(--role1-color), 0 0 30px rgba(0, 200, 255, 0.3);
+            --role2-glow: 0 0 15px var(--role2-color), 0 0 30px rgba(255, 0, 200, 0.3);
         }
 
         /* 重置所有元素的默认样式 */
@@ -39,6 +43,8 @@
             background-image:
                 radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 20%),
                 radial-gradient(circle at 80% 70%, rgba(255, 0, 230, 0.1) 0%, transparent 20%);
+            display: flex;
+            flex-direction: column;
         }
 
         /* 主容器样式 */
@@ -46,12 +52,16 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
         }
 
         /* 页头样式 */
         header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             position: relative;
         }
 
@@ -79,6 +89,9 @@
             box-shadow: var(--glow);                  /* 霓虹发光效果 */
             backdrop-filter: blur(10px);              /* 背景模糊效果，增加深度感 */
             transition: all 0.3s ease;                /* 平滑过渡效果 */
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* 上传区域悬停效果：增强发光 */
@@ -160,20 +173,29 @@
         /* 可视化区域样式 - 初始隐藏，上传文件后显示 */
         .visualization-section {
             display: none;
-            background: var(--panel-color);
-            border-radius: 15px;
-            padding: 2rem;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            box-shadow: var(--glow);
-            backdrop-filter: blur(10px);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* 防止内容溢出 */
+        }
+
+        /* 辩论信息区域 - 固定在顶部 */
+        .debate-info-container {
+            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--bg-color);
+            padding: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         /* 辩论信息网格布局 */
         .debate-info {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 两列布局 */
-            gap: 2rem;
-            margin-bottom: 2rem;
+            grid-template-columns: 1fr 1fr 1fr; /* 三列布局 */
+            gap: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         /* 信息卡片样式 */
@@ -183,11 +205,12 @@
             padding: 1.5rem;
             border: 1px solid rgba(0, 240, 255, 0.2);
             transition: all 0.3s ease;
+            box-shadow: var(--glow);
         }
 
         /* 信息卡片悬停效果 */
         .info-card:hover {
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px var(--primary-color), 0 0 30px rgba(0, 240, 255, 0.3);
         }
 
         /* 信息卡片标题样式 */
@@ -204,31 +227,22 @@
             line-height: 1.6;
         }
 
-        /* 辩论历史区域样式 */
+        /* 辩论历史区域样式 - 可滚动部分 */
         .debate-history {
-            margin-top: 3rem;
-        }
-
-        /* 辩论历史标题样式 */
-        .debate-history h2 {
-            font-family: 'Orbitron', sans-serif;
-            margin-bottom: 2rem;
-            text-align: center;
-            font-size: 1.8rem;
-            color: var(--highlight-color);
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         /* 聊天容器样式 - 使用flex布局垂直排列消息 */
         .chat-container {
+            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            max-height:1000px;
             overflow-y: auto; /* 内容过多时可滚动 */
             padding: 1rem;
-            border-radius: 10px;
-            background: rgba(10, 10, 26, 0.5);
-            border: 1px solid rgba(0, 240, 255, 0.2);
             /* 自定义滚动条样式 */
             scrollbar-width: thin;
             scrollbar-color: var(--primary-color) var(--bg-color);
@@ -255,6 +269,7 @@
             flex-direction: column;
             max-width: 80%;
             animation: fadeIn 0.5s ease-out; /* 消息淡入动画 */
+            transition: box-shadow 0.3s ease;
         }
 
         /* 消息淡入动画定义 */
@@ -325,6 +340,7 @@
             line-height: 1.6;
             font-size: 1rem;
             white-space: pre-wrap; /* 保留空格和换行 */
+            transition: all 0.3s ease;
         }
 
         /* 角色1(正方)消息内容样式 */
@@ -332,6 +348,7 @@
             background: linear-gradient(135deg, rgba(0, 200, 255, 0.1), rgba(0, 200, 255, 0.2));
             border: 1px solid rgba(0, 200, 255, 0.3);
             border-top-left-radius: 0; /* 创建对话气泡效果 */
+            box-shadow: var(--role1-glow);
         }
 
         /* 角色2(反方)消息内容样式 */
@@ -340,6 +357,137 @@
             border: 1px solid rgba(255, 0, 200, 0.3);
             border-top-right-radius: 0; /* 创建对话气泡效果 */
             text-align: right;
+            box-shadow: var(--role2-glow);
+        }
+
+        /* 消息悬停效果 - 增强发光 */
+        .message.role1:hover .message-content {
+            box-shadow: 0 0 20px var(--role1-color), 0 0 40px rgba(0, 200, 255, 0.4);
+        }
+
+        .message.role2:hover .message-content {
+            box-shadow: 0 0 20px var(--role2-color), 0 0 40px rgba(255, 0, 200, 0.4);
+        }
+
+        /* 消息脉冲发光动画 */
+        @keyframes pulse-glow-1 {
+            0% { box-shadow: var(--role1-glow); }
+            50% { box-shadow: 0 0 20px var(--role1-color), 0 0 40px rgba(0, 200, 255, 0.4); }
+            100% { box-shadow: var(--role1-glow); }
+        }
+
+        @keyframes pulse-glow-2 {
+            0% { box-shadow: var(--role2-glow); }
+            50% { box-shadow: 0 0 20px var(--role2-color), 0 0 40px rgba(255, 0, 200, 0.4); }
+            100% { box-shadow: var(--role2-glow); }
+        }
+
+        .message.role1 .message-content {
+            animation: pulse-glow-1 4s infinite;
+        }
+
+        .message.role2 .message-content {
+            animation: pulse-glow-2 4s infinite;
+        }
+
+        /* Markdown样式 */
+        .message-content h1,
+        .message-content h2,
+        .message-content h3,
+        .message-content h4,
+        .message-content h5,
+        .message-content h6 {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--highlight-color);
+        }
+
+        .message-content p {
+            margin-bottom: 0.8rem;
+        }
+
+        .message-content ul,
+        .message-content ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .message-content li {
+            margin-bottom: 0.3rem;
+        }
+
+        .message-content blockquote {
+            border-left: 3px solid var(--highlight-color);
+            padding-left: 1rem;
+            margin-left: 0.5rem;
+            margin-bottom: 1rem;
+            background: var(--quote-bg-color);
+            padding: 0.5rem 1rem;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .message-content pre {
+            background: var(--code-bg-color);
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .message-content code {
+            font-family: monospace;
+            background: var(--code-bg-color);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        .message-content pre code {
+            border: none;
+            padding: 0;
+            background: transparent;
+        }
+
+        .message-content a {
+            color: var(--highlight-color);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--highlight-color);
+        }
+
+        .message-content a:hover {
+            border-bottom: 1px solid var(--highlight-color);
+            text-shadow: 0 0 5px var(--highlight-color);
+        }
+
+        .message-content img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+        }
+
+        .message-content table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .message-content th,
+        .message-content td {
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .message-content th {
+            background: rgba(0, 240, 255, 0.1);
+        }
+
+        .message-content tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         /* 加载动画容器 - 初始隐藏 */
@@ -447,7 +595,7 @@
         .controls {
             display: flex;
             justify-content: center;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             gap: 1rem;
         }
 
@@ -506,6 +654,7 @@
         @media (max-width: 768px) {
             .container {
                 padding: 1rem;
+                height: 100vh;
             }
 
             .debate-info {
@@ -525,8 +674,10 @@
 <body>
     <!-- 粒子效果容器 - 创建背景浮动粒子 -->
     <div class="particles" id="particles"></div>
+
     <!-- 全息效果层 - 创建整体的全息光效 -->
     <div class="holographic-effect"></div>
+
     <!-- 主内容容器 -->
     <div class="container">
         <header>
@@ -549,16 +700,17 @@
             <p>正在处理数据...</p>
         </div>
 
-        <!-- 可视化区域 - 初始隐藏，数据处理完成后显示 -->
+        <!-- 可视化区域 - 初始隐藏，上传文件后显示 -->
         <div class="visualization-section" id="visualizationSection">
-            <!-- 辩论基本信息区域 -->
-            <div class="debate-info" id="debateInfo">
-                <!-- 辩论信息将在这里动态生成 -->
+            <!-- 辩论基本信息区域 - 固定在顶部 -->
+            <div class="debate-info-container">
+                <div class="debate-info" id="debateInfo">
+                    <!-- 辩论信息将在这里动态生成 -->
+                </div>
             </div>
 
-            <!-- 辩论历史记录区域 -->
+            <!-- 辩论历史记录区域 - 可滚动部分 -->
             <div class="debate-history">
-                <h2>辩论历史</h2>
                 <div class="chat-container" id="chatContainer">
                     <!-- 辩论历史将在这里动态生成 -->
                 </div>
@@ -572,161 +724,6 @@
     </div>
 
     <script>
-        // 创建粒子效果
-        // 这个函数在页面加载时创建多个随机位置、大小和颜色的粒子，形成背景动画效果
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 50; // 粒子总数
-            for (let i = 0; i < particleCount; i++) {
-                // 创建粒子DOM元素
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                // 随机设置粒子属性
-                const x = Math.random() * 100;           // 随机水平位置(0-100%)
-                const delay = Math.random() * 20;        // 随机动画延迟(0-20s)
-                const size = Math.random() * 3 + 1;      // 随机大小(1-4px)
-                const duration = Math.random() * 20 + 10; // 随机动画持续时间(10-30s)
-                // 应用随机样式
-                particle.style.left = `${x}%`;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.animationDelay = `${delay}s`;
-                particle.style.animationDuration = `${duration}s`;
-                // 随机选择粒子颜色 - 青色或品红色
-                if (Math.random() > 0.5) {
-                    particle.style.backgroundColor = '#00f0ff'; // 青色
-                    particle.style.boxShadow = '0 0 10px #00f0ff';
-                } else {
-                    particle.style.backgroundColor = '#ff00e6'; // 品红色
-                    particle.style.boxShadow = '0 0 10px #ff00e6';
-                }
-                // 将粒子添加到容器中
-                particlesContainer.appendChild(particle);
-            }
-        }
-
-        // 处理文件上传
-        // 这个函数设置文件上传逻辑，包括文件验证、读取和错误处理
-        function handleFileUpload() {
-            const fileInput = document.getElementById('jsonFileInput');
-            const errorMessage = document.getElementById('errorMessage');
-            const loading = document.getElementById('loading');
-            const uploadSection = document.getElementById('uploadSection');
-            const visualizationSection = document.getElementById('visualizationSection');
-            // 监听文件选择变化事件
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                // 验证文件类型是否为JSON
-                if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
-                    errorMessage.textContent = '请上传JSON文件';
-                    errorMessage.style.display = 'block';
-                    return;
-                }
-                // 隐藏错误信息，显示加载动画
-                errorMessage.style.display = 'none';
-                loading.style.display = 'block';
-                // 创建文件读取器
-                const reader = new FileReader();
-                // 文件读取完成后的处理
-                reader.onload = function(event) {
-                    try {
-                        // 解析JSON数据
-                        const data = JSON.parse(event.target.result);
-                        // 可视化数据
-                        visualizeData(data);
-                        // 切换显示：隐藏上传区域，显示可视化区域
-                        uploadSection.style.display = 'none';
-                        loading.style.display = 'none';
-                        visualizationSection.style.display = 'block';
-                    } catch (error) {
-                        // JSON解析错误处理
-                        errorMessage.textContent = '无法解析JSON文件: ' + error.message;
-                        errorMessage.style.display = 'block';
-                        loading.style.display = 'none';
-                    }
-                };
-                // 文件读取错误处理
-                reader.onerror = function() {
-                    errorMessage.textContent = '读取文件时发生错误';
-                    errorMessage.style.display = 'block';
-                    loading.style.display = 'none';
-                };
-                // 开始读取文件内容
-                reader.readAsText(file);
-            });
-        }
-
-        // 可视化数据
-        // 这个函数处理JSON数据并创建可视化内容
-        function visualizeData(data) {
-            // 创建Markdown解析器实例
-            const markdown = new SimpleMarkdown();
-
-            // 显示辩论基本信息（主题和双方观点）
-            const debateInfo = document.getElementById('debateInfo');
-            debateInfo.innerHTML = `
-                <div class="info-card">
-                    <h3>辩论主题</h3>
-                    <p>${data.topic || '未提供'}</p>
-                </div>
-                <div class="info-card">
-                    <h3>正方观点</h3>
-                    <p>${data.affirmative_argument || '未提供'}</p>
-                </div>
-                <div class="info-card">
-                    <h3>反方观点</h3>
-                    <p>${data.negative_argument || '未提供'}</p>
-                </div>
-            `;
-            // 显示辩论历史记录
-            const chatContainer = document.getElementById('chatContainer');
-            chatContainer.innerHTML = '';
-            // 检查是否有辩论历史数据
-            if (data.debate_history && data.debate_history.length > 0) {
-                // 设置消息显示延迟，创建打字效果
-                let messageDelay = 0;
-                // 遍历每条辩论记录
-                data.debate_history.forEach((entry, index) => {
-                    // 创建消息元素
-                    const messageElement = document.createElement('div');
-                    messageElement.classList.add('message');
-                    // 根据角色添加不同的样式类
-                    messageElement.classList.add(entry.role === 'role1' ? 'role1' : 'role2');
-                    // 设置角色名称和头像字母
-                    const roleName = entry.role === 'role1' ? '正方' : '反方';
-                    const avatarLetter = entry.role === 'role1' ? 'A' : 'B';
-
-                    // 使用Markdown解析器处理消息内容
-                    const parsedContent = markdown.parse(entry.msg);
-                    // 构建消息HTML
-                    messageElement.innerHTML = `
-                        <div class="message-header">
-                            <div class="avatar">${avatarLetter}</div>
-                            <div class="role-name">${roleName}</div>
-                        </div>
-                        <div class="message-content">${parsedContent}</div>
-                    `;
-                    // 初始设置为不可见
-                    messageElement.style.opacity = '0';
-                    // 添加到聊天容器
-                    chatContainer.appendChild(messageElement);
-                    // 延迟显示每条消息，创建顺序出现的效果
-                    setTimeout(() => {
-                        messageElement.style.opacity = '1';
-                        messageElement.style.animation = 'fadeIn 0.5s ease-out forwards';
-                        // 滚动到最新消息
-                        chatContainer.scrollTop = chatContainer.scrollHeight;
-                    }, messageDelay);
-                    // 每条消息增加300ms延迟
-                    messageDelay += 300;
-                });
-            } else {
-                // 没有辩论历史数据时显示提示
-                chatContainer.innerHTML = '<p style="text-align: center; padding: 2rem;">没有辩论历史数据</p>';
-            }
-        }
-
         // 简易Markdown解析器 - 不依赖外部库
         class SimpleMarkdown {
             constructor() {
@@ -810,6 +807,181 @@
             }
         }
 
+        // 创建粒子效果
+        // 这个函数在页面加载时创建多个随机位置、大小和颜色的粒子，形成背景动画效果
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50; // 粒子总数
+
+            for (let i = 0; i < particleCount; i++) {
+                // 创建粒子DOM元素
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // 随机设置粒子属性
+                const x = Math.random() * 100;           // 随机水平位置(0-100%)
+                const delay = Math.random() * 20;        // 随机动画延迟(0-20s)
+                const size = Math.random() * 3 + 1;      // 随机大小(1-4px)
+                const duration = Math.random() * 20 + 10; // 随机动画持续时间(10-30s)
+
+                // 应用随机样式
+                particle.style.left = `${x}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+
+                // 随机选择粒子颜色 - 青色或品红色
+                if (Math.random() > 0.5) {
+                    particle.style.backgroundColor = '#00f0ff'; // 青色
+                    particle.style.boxShadow = '0 0 10px #00f0ff';
+                } else {
+                    particle.style.backgroundColor = '#ff00e6'; // 品红色
+                    particle.style.boxShadow = '0 0 10px #ff00e6';
+                }
+
+                // 将粒子添加到容器中
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // 处理文件上传
+        // 这个函数设置文件上传逻辑，包括文件验证、读取和错误处理
+        function handleFileUpload() {
+            const fileInput = document.getElementById('jsonFileInput');
+            const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
+            const uploadSection = document.getElementById('uploadSection');
+            const visualizationSection = document.getElementById('visualizationSection');
+
+            // 监听文件选择变化事件
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // 验证文件类型是否为JSON
+                if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                    errorMessage.textContent = '请上传JSON文件';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                // 隐藏错误信息，显示加载动画
+                errorMessage.style.display = 'none';
+                loading.style.display = 'block';
+
+                // 创建文件读取器
+                const reader = new FileReader();
+
+                // 文件读取完成后的处理
+                reader.onload = function(event) {
+                    try {
+                        // 解析JSON数据
+                        const data = JSON.parse(event.target.result);
+                        // 可视化数据
+                        visualizeData(data);
+
+                        // 切换显示：隐藏上传区域，显示可视化区域
+                        uploadSection.style.display = 'none';
+                        loading.style.display = 'none';
+                        visualizationSection.style.display = 'flex';
+                    } catch (error) {
+                        // JSON解析错误处理
+                        errorMessage.textContent = '无法解析JSON文件: ' + error.message;
+                        errorMessage.style.display = 'block';
+                        loading.style.display = 'none';
+                    }
+                };
+
+                // 文件读取错误处理
+                reader.onerror = function() {
+                    errorMessage.textContent = '读取文件时发生错误';
+                    errorMessage.style.display = 'block';
+                    loading.style.display = 'none';
+                };
+
+                // 开始读取文件内容
+                reader.readAsText(file);
+            });
+        }
+
+        // 可视化数据
+        // 这个函数处理JSON数据并创建可视化内容
+        function visualizeData(data) {
+            // 创建Markdown解析器实例
+            const markdown = new SimpleMarkdown();
+            // 显示辩论基本信息（主题和双方观点）
+            const debateInfo = document.getElementById('debateInfo');
+            debateInfo.innerHTML = `
+                <div class="info-card">
+                    <h3>辩论主题</h3>
+                    <p>${data.topic || '未提供'}</p>
+                </div>
+                <div class="info-card">
+                    <h3>正方观点</h3>
+                    <p>${data.affirmative_argument || '未提供'}</p>
+                </div>
+                <div class="info-card">
+                    <h3>反方观点</h3>
+                    <p>${data.negative_argument || '未提供'}</p>
+                </div>
+            `;
+
+            // 显示辩论历史记录
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = '';
+
+            // 检查是否有辩论历史数据
+            if (data.debate_history && data.debate_history.length > 0) {
+                // 设置消息显示延迟，创建打字效果
+                let messageDelay = 0;
+
+                // 遍历每条辩论记录
+                data.debate_history.forEach((entry, index) => {
+                    // 创建消息元素
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message');
+                    // 根据角色添加不同的样式类
+                    messageElement.classList.add(entry.role === 'role1' ? 'role1' : 'role2');
+
+                    // 设置角色名称和头像字母
+                    const roleName = entry.role === 'role1' ? '正方' : '反方';
+                    const avatarLetter = entry.role === 'role1' ? 'A' : 'B';
+                    // 使用Markdown解析器处理消息内容
+                    const parsedContent = markdown.parse(entry.msg);
+
+                    // 构建消息HTML
+                    messageElement.innerHTML = `
+                        <div class="message-header">
+                            <div class="avatar">${avatarLetter}</div>
+                            <div class="role-name">${roleName}</div>
+                        </div>
+                        <div class="message-content">${parsedContent}</div>
+                    `;
+
+                    // 初始设置为不可见
+                    messageElement.style.opacity = '0';
+                    // 添加到聊天容器
+                    chatContainer.appendChild(messageElement);
+
+                    // 延迟显示每条消息，创建顺序出现的效果
+                    setTimeout(() => {
+                        messageElement.style.opacity = '1';
+                        messageElement.style.animation = 'fadeIn 0.5s ease-out forwards';
+
+                        // 滚动到最新消息
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }, messageDelay);
+
+                    // 每条消息增加300ms延迟
+                    messageDelay += 300;
+                });
+            } else {
+                // 没有辩论历史数据时显示提示
+                chatContainer.innerHTML = '<p style="text-align: center; padding: 2rem;">没有辩论历史数据</p>';
+            }
+        }
+
         // 设置重置按钮功能
         // 这个函数为重置按钮添加点击事件，允许用户上传新文件
         function setupResetButton() {
@@ -818,10 +990,12 @@
             const visualizationSection = document.getElementById('visualizationSection');
             const fileInput = document.getElementById('jsonFileInput');
             const errorMessage = document.getElementById('errorMessage');
+
             resetBtn.addEventListener('click', function() {
                 // 重置文件输入
                 fileInput.value = '';
                 errorMessage.style.display = 'none';
+
                 // 切换显示：隐藏可视化区域，显示上传区域
                 visualizationSection.style.display = 'none';
                 uploadSection.style.display = 'block';
@@ -836,35 +1010,45 @@
             handleFileUpload();
             // 设置重置按钮功能
             setupResetButton();
+
             // 设置拖放功能
             const fileUpload = document.getElementById('fileUpload');
+
             // 阻止默认拖放行为
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 fileUpload.addEventListener(eventName, preventDefaults, false);
             });
+
             function preventDefaults(e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
+
             // 拖入和拖过时高亮上传区域
             ['dragenter', 'dragover'].forEach(eventName => {
                 fileUpload.addEventListener(eventName, highlight, false);
             });
+
             // 拖离和放下时取消高亮
             ['dragleave', 'drop'].forEach(eventName => {
                 fileUpload.addEventListener(eventName, unhighlight, false);
             });
+
             function highlight() {
                 fileUpload.classList.add('highlight');
             }
+
             function unhighlight() {
                 fileUpload.classList.remove('highlight');
             }
+
             // 处理文件放下事件
             fileUpload.addEventListener('drop', handleDrop, false);
+
             function handleDrop(e) {
                 const dt = e.dataTransfer;
                 const files = dt.files;
+
                 if (files.length) {
                     // 设置文件输入的文件
                     document.getElementById('jsonFileInput').files = files;
